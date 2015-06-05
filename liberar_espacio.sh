@@ -1,4 +1,9 @@
 #!/bin/bash
+#################################################
+# Este script es ejecutado por crontab una vez a la semana
+#################################################
+
+
 # Obtener paths globales
 source "<path de .paths_globales>"
 ## Para escribir en ~/logs/

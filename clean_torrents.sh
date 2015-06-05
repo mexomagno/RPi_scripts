@@ -6,6 +6,10 @@
 # Si el porcentaje de uso del disco es menor a $UMBRAL, no se hace nada.
 # Si se ingresa la opción -f, se ignora el umbral y se mueven de todas formas.
 # Si falla intentando mover un archivo, reintenta $RETRY veces.
+#
+# Se programó crontab para que ejecute este script todas las noches.
+# Notar que sólo será ejecutado cuando el espacio del disco de torrents
+# sea escaso.
 #############################################################
 
 # iniciar logs
