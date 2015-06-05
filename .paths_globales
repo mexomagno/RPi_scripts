@@ -1,0 +1,38 @@
+# Este archivo contiene variables globales personalizadas por mi.
+# Son visibles para las interactive-shells de todos los usuarios, gracias al 
+# symlink: 
+#
+#				/etc/profile.d/paths_globales.sh --> este archivo
+#
+# Son visibles por root porque su .bashrc es el symlink:
+#
+#				/root/.bashrc --> este archivo
+#
+# El archivo original está en <path de este archivo>/.paths_globales.
+#
+# ADVERTENCIA:
+#	Estas variables NO SON VISIBLES para scripts en ejecución, ya que son
+#	non-interactive shells, por lo que no ejecutan .profile, .bashrc,
+#	.bash_profile, etcétera. Si dentro de un script se referencia a alguna de estas
+#   variables, NO ESTARÁ DEFINIDA, RETORNARÁ "".
+# 	Para usar estas variables es necesario hacer en cada script:
+#
+#				source "<path de este archivo>.paths_globales"
+ 
+
+# Scripts
+SCRIPTS_MAX="<directorio de mis scripts>"
+LOGGER_SH="$SCRIPTS_MAX/<directorio de logs.sh>"
+LOGGER_PY="$SCRIPTS_MAX/<directorio de logs.py>"
+COLORS_SH="$SCRIPTS_MAX/<directorio de colores.conf>"
+COLORS_PY="$SCRIPTS_MAX/<directorio de colores.py>"
+
+# Sistemas de archivos
+FS_DISCO1="<directorio donde monto mi disco 1>"
+FS_DISCO2="<directorio donde monto mi disco 2>"
+FS_TORRENTS="<directorio donde monto mi disco de torrents>"
+
+#
+# Directorios de interés
+TORRENTS="$FS_TORRENTS/<carpeta de torrents completados>"
+LOGS_MAX="<carpeta de logs de mis scripts>"
