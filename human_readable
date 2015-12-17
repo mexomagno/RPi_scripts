@@ -1,0 +1,16 @@
+#!/bin/bash
+FREED_SPACE="$1"
+human() {
+        sufixes="BKMGTPE"
+        temp_size=$1
+        exp=0
+	factor=1
+        while [ "$temp_size" -ge "1024" ]; do
+                exp=$((exp+1))
+		factor=$((factor*1024))
+                temp_size="$(($1/$factor))"
+        done
+        echo "$temp_size" "${sufixes:$exp:1}"
+}
+HUMAN_FREED_SPACE="$(human $FREED_SPACE)"
+echo -e "${azul_claro}Se liberaron $HUMAN_FREED_SPACE"
