@@ -1,0 +1,4 @@
+#!/bin/bash
+pw=<password para MPD>
+# Recibe string a buscar en playlist y quita todas las canciones que lo poseen
+mpc -h "$pw@localhost" del $(mpc -h $pw@localhost playlist | grep -ne $1 | cut -d':' --field=1)
