@@ -2,7 +2,7 @@
 
 #############################################################
 # Este script toma los torrents descargados de transmission-daemon
-# y los lleva a una carpeta designada por $dest_dir.
+# y los lleva a una carpeta designada por $DEST_DIR.
 # Si el porcentaje de uso del disco es menor a $UMBRAL, no se hace nada.
 # Si se ingresa la opción -f, se ignora el umbral y se mueven de todas formas.
 # Si falla intentando mover un archivo, reintenta $RETRY veces.
@@ -32,8 +32,8 @@ if [ "$(whoami)" != "root" ]; then
 	salir 1
 fi
 # Revisar que están los torrents
-src_dir="$TORRENTS"
-if [ "$src_dir" == "" ]; then
+SRC_DIR="$TORRENTS"
+if [ "$SRC_DIR" == "" ]; then
 	#problemas con la variable global!
 	echo "Problemas con las variables globales! Abortando..."
 	salir 1
@@ -46,7 +46,7 @@ if [ ismounted == "" ]; then
 fi
 # Revisar el porcentaje de espacio ocupado del disco de torrents
 if [ "$1" != "-f" ]; then 
-	porcent=$(df $src_dir | tail -1 | awk '{print $5}' | rev | cut -c 2- | rev )
+	porcent=$(df $SRC_DIR | tail -1 | awk '{print $5}' | rev | cut -c 2- | rev )
 	UMBRAL=80
 	if (( porcent<UMBRAL )); then
 		# no hacer nada
@@ -62,14 +62,14 @@ else
 	echo "Forzando movimiento de archivos (-f)"
 fi
 # Revisar que el disco de destino existe, está montado y tiene espacio
-dest_dir="$FS_SOFTWARE/<carpeta donde guardar torrents listos>"
+DEST_DIR="$FS_SOFTWARE/<carpeta donde guardar torrents listos>"
 ismounted=$(mount | grep $FS_SOFTWARE)
 if [ ismounted == "" ]; then
-	logWrite "No se encuentra $dest_dir"
+	logWrite "No se encuentra $DEST_DIR"
 	echo "El disco de destino no está montado. Abortando..."
 	salir 1
 fi
-cd $src_dir
+cd $SRC_DIR
 # Detener servicio de torrents
 logWrite "Deteniendo transmission-daemon..."
 echo "Deteniendo transmission-daemon..."
@@ -87,13 +87,13 @@ for f in *; do
 #### copiar el archivo al destino
 	logWrite "Moviendo $f..."
 	echo "Moviendo $f..."
-	rc=$(mv "$f" "$dest_dir")
+	rc=$(mv "$f" "$DEST_DIR")
 	if (( RETRY >= 2 )); then
 		while (( rc != 0 )); do
 			R=$((R+1))
 			logWrite "ERROR al mover. Reintentando... ($R de $RETRY)"
 			echo "Ocurrió un error al mover '$f'. Reintento $R de $RETRY..."
-			rc=$(mv "$f" "$dest_dir")
+			rc=$(mv "$f" "$DEST_DIR")
 			# Superó máximo de reintentos?
 			if (( R == RETRY )); then
 				logWrite "ERROR. Se superó n° de reintentos. Abortando..."
@@ -122,18 +122,23 @@ fi
 msg="$n_files descargas movidas"
 rc=0
 if [ "$(ls)" != "" ]; then
-	msg+=" pero no son todas. Revise '$src_dir'."
+	msg+=" pero no son todas. Revise '$SRC_DIR'."
 	rc=1
 fi
 logWrite $msg
 echo $msg
 space=$(df -h $FS_SOFTWARE | tail -1 | awk '{print $4}')
-logWrite "Quedaron $space libres en $dest_dir"
-echo "Le quedan $space libres en $dest_dir."
+logWrite "Quedaron $space libres en $DEST_DIR"
+echo "Le quedan $space libres en $DEST_DIR."
 # Volver a iniciar servicio de torrents
 logWrite "Reiniciando transmission-daemon..."
 echo "Reiniciando transmission..."
 service transmission-daemon start
+# esperar a que el servicio esté efectivamente iniciado
+running=$(ps -e | grep transmission)
+while [ "$running" == "" ]; do
+	sleep 1
+done
 # Eliminando torrents listos de transmission. La manera de identificarlos es viendo si tienen error de "No data found"
 logWrite "Limpiando lista de descargas..."
 echo "Limpiando lista de descargas..."
