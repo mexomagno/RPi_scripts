@@ -1,0 +1,18 @@
+#!/bin/bash
+#####################################
+# Este script está pensado para usarse en archivos de música donde se agregó
+# a cada nombre de archivo, números y/o nombre del disco.
+# Es necesario definir inteligentemente el separador. En este caso, por defecto
+# se usa el '-'.
+#####################################
+
+separador="'-'"
+echo "$separador"
+exit 0
+for f in *; do
+	newf="$(echo $f | awk -F $separador '{print $2}')"
+	if [ "$newf" !0 "" ] ; then
+		echo $newf
+		mv "$f" "$newf"
+	fi
+done
